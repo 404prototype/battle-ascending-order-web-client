@@ -1,6 +1,8 @@
 import classNames from 'classnames';
+import { useEffect } from 'react';
 import { ReactComponent as ProfileImage } from '../../assets/images/profile.svg';
 import Button from '../Button';
+import { socket } from '../../api/socket';
 import styles from './Ready.module.scss';
 const Ready = (props = {}) => {
   const {
@@ -8,7 +10,27 @@ const Ready = (props = {}) => {
     players = []
   } = props;
 
-  const onClickReadyBtn = () => {};
+  useEffect(() => {
+    socket.emit('join-room');
+
+    socket.on('response-join-room', (data) => {
+      console.log(data);
+    });
+
+    socket.on('response-ready-game', (data) => {
+      console.log(data);
+    });
+    console.log(socket);
+
+    return () => {
+      socket.off('response-join-room');
+      socket.off('response-ready-game');
+    };
+  }, []);
+
+  const onClickReadyBtn = () => {
+    socket.emit('ready-game');
+  };
 
   return (
     <div className={styles['room-ready']}>

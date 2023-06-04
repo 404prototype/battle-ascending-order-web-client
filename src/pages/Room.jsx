@@ -28,9 +28,15 @@ const Room = (props = {}) => {
       { text: '이때 연속된 동일한 숫자도 오름차순으로 인정한다' }
     ]
   };
-  const players = [{ name: '제임스' }, { name: '셜록' }];
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [fooEvents, setFooEvents] = useState([]);
+  const players = [{ name: '제임스' }];
+
+  // socket.emit('join-room');
+  // socket.emit('ready-game');
+  // socket.emit('start-game');
+  // socket.emit('pick-first-card');
+  // socket.emit('pick-second-card');
+  // socket.emit("write-number-to-sheet", { index: 4, number: 7 })
+  // socket.emit('select-a-card', { number: 7 });
 
   useEffect(() => {
     socket.connect();
@@ -39,24 +45,24 @@ const Room = (props = {}) => {
       console.log(socket.id);
     });
 
-    socket.on('response-start-game', (data) => {
-      console.log(data);
-    });
+    // socket.on('response-start-game', (data) => {
+    //   console.log(data);
+    // });
 
-    socket.on('response-ready-game', () => {
-      console.log('response-ready-game');
-    });
+    // socket.on('response-ready-game', () => {
+    //   console.log('response-ready-game');
+    // });
 
-    socket.on('response-pick-first-card', (data) => {
-      console.log(data);
-    });
+    // socket.on('response-pick-first-card', (data) => {
+    //   console.log(data);
+    // });
 
-    socket.on('response-pick-second-card', (data) => {
-      console.log(data);
-    });
+    // socket.on('response-pick-second-card', (data) => {
+    //   console.log(data);
+    // });
 
-    socket.on('response-write-number-to-sheet', (data) => console.log(data));
-    socket.on('response-select-a-card', (data) => console.log('response-select-a-card', data));
+    // socket.on('response-write-number-to-sheet', (data) => console.log(data));
+    // socket.on('response-select-a-card', (data) => console.log('response-select-a-card', data));
 
     return () => {
       socket.disconnect();
