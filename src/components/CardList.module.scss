@@ -1,0 +1,18 @@
+.list-card {
+  position: relative;
+  width: 790px;
+  height: 490px;
+  li {
+    position: absolute;
+    @for $i from 1 to 10 {
+      &:nth-child(#{$i}) {
+        left: 160px * ($i % 5);
+        @if $i < 5 {
+          top: 0;
+        } @else {
+          top: 150px * 1.6 + 10px;
+        }
+      }
+    }
+  }
+}

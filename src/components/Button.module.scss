@@ -1,0 +1,42 @@
+.btn{
+  display: inline-block;
+  padding: 0 8px;
+  font-weight: 500;
+  box-sizing: border-box;
+  border-radius: 4px;
+  vertical-align: top;
+  text-align: center;
+  text-decoration: none;
+
+  &:disabled {
+    color: #ccc;
+    background: #fffce5;
+    cursor: not-allowed;
+  }
+  &-primary {
+    color: #4c4c4c;
+    background: #ffdd00;
+    &:hover {
+      background: #e5c700;
+    }
+  }
+  &-secondary {
+    color: #fff;
+    background: #4c4c4c;
+    &:hover {
+      background: #6d6d6d;
+    }
+  }
+  &-medium {
+    min-width: 64px;
+    font-size: 13px;
+    height: 34px;
+    line-height: 34px;
+  }
+  &-large {
+    min-width: 90px;
+    font-size: 15px;
+    height: 50px;
+    line-height: 51px;
+  }
+}

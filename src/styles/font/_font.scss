@@ -1,0 +1,20 @@
+$fontDirectory: '../../assets/fonts';
+@font-face {
+  font-family: 'poke';
+  font-weight: normal;
+  // src: url(#{$fontDirectory}/NotoSansKR-Regular.woff2) format('woff2');
+  src: local("☺"), url(../../assets/fonts/poke.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'notosans';
+  font-weight: normal;
+  src: local("☺"), url(#{$fontDirectory}/NotoSansKR-Regular.woff2) format('woff2');
+  src: url(#{$fontDirectory}/NotoSansKR-Regular.woff) format('woff');
+}
+@font-face {
+  font-family: 'notosans';
+  font-weight: 700;
+  src: local("☺"), url(#{$fontDirectory}/NotoSansKR-Bold.woff2) format('woff2');
+  src: url(#{$fontDirectory}/NotoSansKR-Bold.woff) format('woff');
+}

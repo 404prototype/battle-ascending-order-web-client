@@ -1,0 +1,11 @@
+.doc-footer {
+  flex: 1 1 auto;
+  background: rgb(116, 185, 202);
+  text-align: center;
+  small {
+    display: block;
+    font-size: 12px;
+    color: #fff;
+    line-height: 24px;
+  }
+}
