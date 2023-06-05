@@ -3,7 +3,7 @@ import { create } from 'react-modal-promise';
 import Button from './Button';
 import styles from './Modal.module.scss';
 
-const Modal = ({ isOpen, onResolve, onReject, text, title }) => {
+const Modal = ({ isOpen, onResolve, onReject, isConfirm = true, text, title }) => {
   const submit = () => onResolve();
   const reject = () => onReject();
 
@@ -20,9 +20,11 @@ const Modal = ({ isOpen, onResolve, onReject, text, title }) => {
           <Button color="primary" onClick={submit}>
             확인
           </Button>
-          <Button color="secondary" onClick={reject}>
-            취소
-          </Button>
+          {!isConfirm && (
+            <Button color="secondary" onClick={reject}>
+              취소
+            </Button>
+          )}
         </div>
       </div>
     </div>

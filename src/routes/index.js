@@ -1,9 +1,21 @@
-import App from '../App.js';
+import App from '../App';
+import Home from '../pages/Home';
+import Room from '../pages/room/_index';
 
 const routes = [
   {
     path: '/',
-    element: <App />
+    element: <App />,
+    children: [
+      {
+        path: '/home',
+        element: <Home />
+      },
+      {
+        path: '/room/:id',
+        element: <Room />
+      }
+    ]
   }
 ];
 

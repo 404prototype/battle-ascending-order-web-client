@@ -4,9 +4,9 @@ import CardList from './CardList';
 import styles from './CardModal.module.scss';
 
 const CardModal = ({ isOpen, onResolve, title }) => {
-  const onClickSelectMyCard = (...props) => {
+  const onClickSelectMyCard = (data) => {
     setTimeout(() => {
-      onResolve(props);
+      onResolve(data);
     }, 1200);
   };
 

@@ -1,0 +1,23 @@
+$cardWidth: 150px;
+$cardHeight: $cardWidth * 1.6;
+.list {
+  display: flex;
+  width: 100%;
+  margin: 16px;
+  flex-wrap: nowrap;
+  align-self: flex-end;
+  &__item {
+    flex: 1 1 auto;
+    &__inner {
+      position: relative;
+      padding-top: 160%;
+      border: 1px solid #888;
+      box-sizing: border-box;
+    }
+    & + .list__item {
+      .list__item__inner {
+        border-left: 0 none;
+      }
+    }
+  }
+}

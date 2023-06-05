@@ -1,13 +1,19 @@
-import { useEffect, useState, Suspense } from 'react';
-import { socket } from '../api/socket';
-import Ready from '../components/step/Ready';
-import Gaming from '../components/step/Gaming';
-import Result from '../components/step/Result';
-import Spinner from '../components/Spinner';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { socket, initSocket } from '../../api/socket';
+import Ready from '../../components/step/Ready';
+import Gaming from '../../components/step/Gaming';
+import Result from '../../components/step/Result';
+import Modal from '../../components/Modal';
+import styles from './_index.module.scss';
 
 const Room = (props = {}) => {
   // enum ['READY', 'GAMING', 'RESULT']
+  const navigate = useNavigate();
+  const { id = '' } = useParams();
   const [step, setStep] = useState('READY');
+  const [gamingInfo, setGamingInfo] = useState({});
+  const [players, setPlayers] = useState([{ name: '제임스' }]);
   const ruleInfo = {
     title: '배틀오름차순',
     desc: '랜덤으로 뽑은 숫자를 오름차순으로 최대한 길게 배열해라',
@@ -28,63 +34,66 @@ const Room = (props = {}) => {
       { text: '이때 연속된 동일한 숫자도 오름차순으로 인정한다' }
     ]
   };
-  const players = [{ name: '제임스' }];
+  window.setStep = setStep;
 
-  // socket.emit('join-room');
-  // socket.emit('ready-game');
-  // socket.emit('start-game');
-  // socket.emit('pick-first-card');
-  // socket.emit('pick-second-card');
+  // useEffect(() => {
+  //   setStep('GAMING');
+  // });
+
   // socket.emit("write-number-to-sheet", { index: 4, number: 7 })
-  // socket.emit('select-a-card', { number: 7 });
+  initSocket(id);
 
   useEffect(() => {
     socket.connect();
+    console.log({ socket });
 
     socket.on('connect', () => {
       console.log(socket.id);
     });
-
-    // socket.on('response-start-game', (data) => {
-    //   console.log(data);
-    // });
-
-    // socket.on('response-ready-game', () => {
-    //   console.log('response-ready-game');
-    // });
-
-    // socket.on('response-pick-first-card', (data) => {
-    //   console.log(data);
-    // });
-
-    // socket.on('response-pick-second-card', (data) => {
-    //   console.log(data);
-    // });
-
-    // socket.on('response-write-number-to-sheet', (data) => console.log(data));
-    // socket.on('response-select-a-card', (data) => console.log('response-select-a-card', data));
 
     return () => {
       socket.disconnect();
     };
   }, []);
 
+  const onResponseStartGame = (data) => {
+    if (data.error) {
+      Modal({ text: '현재 입장 가능한 인원이 초과 했습니다.' })
+        .then(() => {
+          navigate('/');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    setGamingInfo(data?.room);
+    console.log(data);
+    setStep('GAMING');
+  };
+
   return (
-    <div>
-      <Suspense fallback={<Spinner />}>
-        {(() => {
-          switch (step) {
-            case 'READY':
-              return <Ready info={ruleInfo} players={players} />;
-            case 'GAMING':
-              return <Gaming />;
-            case 'RESULT':
-              return <Result />;
-            default:
-              return;
-          }
-        })()}
-      </Suspense>
+    <div className={styles.room}>
+      {step}
+      {(() => {
+        switch (step) {
+          case 'READY':
+            return (
+              <Ready
+                id={id}
+                info={ruleInfo}
+                players={players}
+                onResponseStartGame={onResponseStartGame}
+              />
+            );
+          case 'GAMING':
+            return <Gaming id={id} gamingInfo={gamingInfo} />;
+          case 'RESULT':
+            return <Result />;
+          default:
+            return;
+        }
+      })()}
     </div>
   );
 };

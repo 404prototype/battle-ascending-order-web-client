@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
+import { socket } from '../api/socket';
 import Card from './Card';
 import styles from './CardList.module.scss';
 
@@ -14,29 +15,15 @@ const CardList = (props = {}) => {
     .map((_) => defaultCardOpt);
   const [cardList, setCardList] = useState(defaultCardList);
   const [selectedCards, setSelectedCards] = useState([]);
-  const [isSelectedMode, setIsSelectedMode] = useState(false);
+  const [clickedCards, setClickedCards] = useState([]);
   const [myCard, setMyCard] = useState(null);
   const [isBeforeDestroy, setIsBeforeDestroy] = useState(false);
 
-  const shuffleArray = (array) => {
-    const shuffledArray = [...array];
-    shuffledArray.sort(() => Math.random() - 0.5);
-    return shuffledArray;
-  };
-
-  const getRandomList = (arrLength) => {
-    const arr = Array(arrLength)
-      .fill(0)
-      .map((_, i) => i + 1);
-    const shuffledArray = shuffleArray(arr);
-    return shuffledArray;
-  };
-
-  const randomList = getRandomList(10);
+  const isTwiceSelected = useMemo(() => selectedCards.length >= 2, [selectedCards]);
 
   const onClickCard = (info = {}) => {
     const { index, isSelected } = info;
-    if (isSelectedMode) {
+    if (isTwiceSelected) {
       if (isBeforeDestroy) {
         return;
       }
@@ -45,36 +32,57 @@ const CardList = (props = {}) => {
       setMyCard(info.cardNumber);
 
       onClickSelectMyCard({
-        myCard: info.cardNumber,
-        opponentCard: selectedCards.find((cardNum) => cardNum !== info.cardNumber)
+        number: info.cardNumber
       });
     }
 
-    if (isSelected) {
+    const clickedCardSize = clickedCards.length;
+
+    if (isSelected || clickedCardSize >= 2) {
       return;
     }
 
-    const changedCardList = [...cardList];
-    const changedInfo = {
-      ...changedCardList[index],
-      isSelected: true,
-      cardNumber: randomList[index]
-    };
+    setClickedCards([...clickedCards, index]);
+    console.log(clickedCards, [...clickedCards, index]);
 
-    changedCardList[index] = changedInfo;
-    setCardList(changedCardList);
-    setSelectedCards([...selectedCards, index]);
+    if (clickedCardSize === 0) {
+      socket.emit('pick-first-card');
+    } else {
+      socket.emit('pick-second-card');
+    }
   };
 
   useEffect(() => {
-    if (selectedCards.length >= 2) {
-      const removeNotSelectedCards = (removeCards) => {
-        setIsSelectedMode(true);
+    const onResponsePickCard = (data, isFirst) => {
+      const index = clickedCards[isFirst ? 0 : 1];
+      const number = data?.pickedCard;
+      const changedCardList = [...cardList];
+      const changedInfo = {
+        ...changedCardList[index],
+        isSelected: true,
+        cardNumber: number
       };
 
-      removeNotSelectedCards(selectedCards);
-    }
-  }, [selectedCards]);
+      changedCardList[index] = changedInfo;
+      setCardList(changedCardList);
+      setSelectedCards([...selectedCards, changedInfo]);
+    };
+
+    socket.on('response-pick-first-card', (data) => {
+      console.log('first-pick-res', clickedCards, data);
+      onResponsePickCard(data, true);
+    });
+
+    socket.on('response-pick-second-card', (data) => {
+      console.log('second-pick-res', clickedCards, data);
+      onResponsePickCard(data, false);
+    });
+
+    return () => {
+      socket.off('response-pick-first-card');
+      socket.off('response-pick-second-card');
+    };
+  }, [cardList, clickedCards, selectedCards]);
 
   return (
     <ol className={styles['list-card']}>
@@ -86,7 +94,7 @@ const CardList = (props = {}) => {
           isSelected={cardItem.isSelected}
           cardNumber={cardItem.cardNumber}
           myCard={myCard}
-          isSelectedMode={isSelectedMode}
+          isTwiceSelected={isTwiceSelected}
           onClickCard={onClickCard}
         />
       ))}

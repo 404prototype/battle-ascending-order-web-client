@@ -2,7 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import React from 'react';
 import { Container as ModalContainer } from 'react-modal-promise';
 import DefaultLayout from './layout/Default';
-import Home from './pages/Room';
+import Home from './pages/Home';
+import Room from './pages/room/_index';
 
 const App = () => {
   const layoutInfo = {
@@ -19,12 +20,10 @@ const App = () => {
 
   return (
     <DefaultLayout layoutInfo={layoutInfo}>
-      <h2>{layoutInfo.content.title}</h2>
       <ModalContainer />
       <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/gift/:id" element={<Gift />} />
-        <Route path="/list" element={<List />} /> */}
+        <Route index path="/" element={<Home />} />
+        <Route path="/room/:id" element={<Room />} />
       </Routes>
     </DefaultLayout>
   );

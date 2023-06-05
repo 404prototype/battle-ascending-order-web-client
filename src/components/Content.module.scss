@@ -2,4 +2,12 @@
   height: 100%;
   min-height: 500px;
   background: #fff;
+  .content-article {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    &__title {
+      flex: 1 1 auto;
+    }
+  }
 }

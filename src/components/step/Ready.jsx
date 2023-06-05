@@ -1,30 +1,43 @@
 import classNames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ReactComponent as ProfileImage } from '../../assets/images/profile.svg';
 import Button from '../Button';
 import { socket } from '../../api/socket';
+import Spinner from '../Spinner';
 import styles from './Ready.module.scss';
 const Ready = (props = {}) => {
+  const [isJoined, setIsJoined] = useState(false);
   const {
     info: { title, desc, rules },
-    players = []
+    players = [],
+    onResponseStartGame
   } = props;
 
   useEffect(() => {
+    console.log('READY');
     socket.emit('join-room');
-
+    console.log(socket);
     socket.on('response-join-room', (data) => {
-      console.log(data);
+      if (data?.state === 'playing') {
+        console.log(data);
+        onResponseStartGame(data);
+        return;
+      }
+      setIsJoined(true);
     });
 
     socket.on('response-ready-game', (data) => {
       console.log(data);
     });
-    console.log(socket);
+
+    socket.on('response-start-game', (data) => {
+      onResponseStartGame(data);
+    });
 
     return () => {
       socket.off('response-join-room');
       socket.off('response-ready-game');
+      socket.off('response-start-game');
     };
   }, []);
 
@@ -34,7 +47,9 @@ const Ready = (props = {}) => {
 
   return (
     <div className={styles['room-ready']}>
+      {!isJoined && <Spinner />}
       <div className={styles.rule}>
+        {socket.id}
         <div className={styles.rule__box}>
           <strong className={styles.rule__box__title}>{title}</strong>
           <p className={styles.rule__box__desc}>{desc}</p>

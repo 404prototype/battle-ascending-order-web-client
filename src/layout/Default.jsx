@@ -14,7 +14,7 @@ const Default = (props = {}) => {
       </div>
 
       <Header {...layoutInfo.header} />
-      <Content>{children}</Content>
+      <Content {...layoutInfo.content}>{children}</Content>
       <Footer {...layoutInfo.footer} />
     </div>
   );

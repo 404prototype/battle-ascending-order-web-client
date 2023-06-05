@@ -6,7 +6,7 @@ const Card = (props = {}) => {
     index,
     animation = true,
     isSelected = false,
-    isSelectedMode = false,
+    isTwiceSelected = false,
     cardNumber = null,
     myCard,
     onClickCard = () => {}
@@ -19,11 +19,11 @@ const Card = (props = {}) => {
   return (
     <li
       className={classNames(styles.card, {
-        [styles.next]: isSelectedMode,
+        [styles.next]: isTwiceSelected,
         [styles.animation]: animation,
         [styles.selected]: isSelected,
         [styles[`selected__${myCard === cardNumber ? 'my' : 'opponent'}`]]:
-          myCard !== null && isSelectedMode
+          myCard !== null && isTwiceSelected
       })}
       onClick={onClick}
     >
