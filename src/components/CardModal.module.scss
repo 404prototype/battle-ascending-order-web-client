@@ -20,8 +20,16 @@
   &__header {
     &__title {
       display: block;
-      font-size: 16px;
+      font-size: 24px;
       text-align: center;
+    }
+    &__desc {
+      display: block;
+      font-size: 18px;
+      text-align: center;
+      em {
+        font-weight: bold;
+      }
     }
   }
   &__body {

@@ -12,7 +12,8 @@ const Room = (props = {}) => {
   const navigate = useNavigate();
   const { id = '' } = useParams();
   const [step, setStep] = useState('READY');
-  const [gamingInfo, setGamingInfo] = useState({});
+  const [initalGameInfo, setinitalGameInfo] = useState({});
+  const [isInitSocket, setIsInitSocket] = useState(false);
   const [players, setPlayers] = useState([{ name: '제임스' }]);
   const ruleInfo = {
     title: '배틀오름차순',
@@ -34,27 +35,20 @@ const Room = (props = {}) => {
       { text: '이때 연속된 동일한 숫자도 오름차순으로 인정한다' }
     ]
   };
-  window.setStep = setStep;
-
-  // useEffect(() => {
-  //   setStep('GAMING');
-  // });
-
-  // socket.emit("write-number-to-sheet", { index: 4, number: 7 })
-  initSocket(id);
 
   useEffect(() => {
-    socket.connect();
-    console.log({ socket });
+    initSocket(id);
+    // socket.connect();
 
     socket.on('connect', () => {
+      setIsInitSocket(true);
       console.log(socket.id);
     });
 
     return () => {
-      socket.disconnect();
+      // socket.disconnect();
     };
-  }, []);
+  }, [id]);
 
   const onResponseStartGame = (data) => {
     if (data.error) {
@@ -67,33 +61,42 @@ const Room = (props = {}) => {
         });
     }
 
-    setGamingInfo(data?.room);
-    console.log(data);
+    setinitalGameInfo(data?.room);
     setStep('GAMING');
+  };
+
+  const onResponseEndGame = (data) => {
+    // setStep('RESULT');
   };
 
   return (
     <div className={styles.room}>
-      {step}
-      {(() => {
-        switch (step) {
-          case 'READY':
-            return (
-              <Ready
-                id={id}
-                info={ruleInfo}
-                players={players}
-                onResponseStartGame={onResponseStartGame}
-              />
-            );
-          case 'GAMING':
-            return <Gaming id={id} gamingInfo={gamingInfo} />;
-          case 'RESULT':
-            return <Result />;
-          default:
-            return;
-        }
-      })()}
+      {isInitSocket &&
+        (() => {
+          switch (step) {
+            case 'READY':
+              return (
+                <Ready
+                  id={id}
+                  info={ruleInfo}
+                  players={players}
+                  onResponseStartGame={onResponseStartGame}
+                />
+              );
+            case 'GAMING':
+              return (
+                <Gaming
+                  id={id}
+                  initalGameInfo={initalGameInfo}
+                  onResponseEndGame={onResponseEndGame}
+                />
+              );
+            case 'RESULT':
+              return <Result />;
+            default:
+              return;
+          }
+        })()}
     </div>
   );
 };

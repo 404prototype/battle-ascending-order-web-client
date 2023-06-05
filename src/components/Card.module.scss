@@ -3,7 +3,6 @@ $cardWidth: 150px;
 $cardHeight: $cardWidth * 1.6;
 .card {
   display: flex;
-  overflow: hidden;
   width: $cardWidth;
   height: $cardHeight;
   align-items: center;
@@ -116,23 +115,53 @@ $cardHeight: $cardWidth * 1.6;
     }
     &.selected {
       &__my {
-        transition-delay: 0s;
-        left: calc(50% - #{$cardWidth / 2});
-        // .card {
-        //   &__front, &__back {
-        //     border-color: red;
-        //   }
-        // }
+        pointer-events: none;
+
+        // transition-delay: 0s;
+        // left: calc(50% - #{$cardWidth / 2});
+        .card {
+          &__front {
+            border-color: red;
+            &::before {
+              border-color: red;
+            }
+            &::after {
+              position: absolute;
+              left: 0;
+              top: -20px;
+              width: 100%;
+              height: 20px;
+              line-height: 20px;
+              color: red;
+              text-align: center;
+              content: '내가 선택할 카드';
+            }
+          }
+        }
       }
       &__opponent {
-        transition-delay: 0s;
-        opacity: 0;
+        // transition-delay: 0s;
+        // opacity: 0;
         pointer-events: none;
-        // .card {
-        //   &__front, &__back {
-        //     border-color: blue;
-        //   }
-        // }
+        .card {
+          &__front {
+            border-color: blue;
+            &::before {
+              border-color: blue;
+            }
+            &::after {
+              position: absolute;
+              left: 0;
+              top: -20px;
+              width: 100%;
+              height: 20px;
+              line-height: 20px;
+              color: blue;
+              text-align: center;
+              content: '상대방이 선택할 카드';
+            }
+          }
+        }
       }
     }
   }

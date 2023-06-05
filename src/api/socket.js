@@ -9,7 +9,6 @@ const initSocket = (auth) => {
       Authorization: auth
     }
   });
-  console.log({ socket });
 };
 
 export { socket, initSocket };

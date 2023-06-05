@@ -1,5 +1,29 @@
 .room-ready {
   display: flex;
+  .box {
+    position: relative;
+    padding: 20px;
+    &__title {
+      position: absolute;
+      left: 20px;
+      top: 0;
+      font-size: 14px;
+      color: #5ec1ff;
+      line-height: 21px;
+      background: #fff;
+    }
+    &::before {
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      right: 9px;
+      bottom: 9px;
+      z-index: -1;
+      border: 2px solid #5ec1ff;
+      border-radius: 10px;
+      content: '';
+    }
+  }
   .rule {
     flex: 1 1 auto;
   }

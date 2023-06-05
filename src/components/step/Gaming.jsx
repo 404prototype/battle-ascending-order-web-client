@@ -6,68 +6,71 @@ import { socket } from '../../api/socket';
 import styles from './Gaming.module.scss';
 
 const Gaming = (props = {}) => {
-  const { id = null, gamingInfo } = props;
-  const { currentTurnPlayer } = gamingInfo || {};
-  const { id: currentTurnId } = currentTurnPlayer || {};
-  const [boardList, setBoardList] = useState(Array(10).fill({ number: null }));
+  const { id = null, initalGameInfo, onResponseEndGame } = props;
+  const { currentTurnPlayer: initalTurnPlayer } = initalGameInfo || {};
+  const [currentTurnId, setCurrentTurnId] = useState(initalTurnPlayer?.id);
+  const [turn, setTurn] = useState(1);
   const [putToNumber, setPutToNumber] = useState(null);
   // PICK_CARD, PICK_BOARD
   const [state, setState] = useState('PICK_CARD');
 
-  console.log(id, gamingInfo);
   const isMyTurn = useMemo(() => id === currentTurnId, [id, currentTurnId]);
-  const isPickingCard = useMemo(() => state === 'PICK_CARD', [state]);
 
   useEffect(() => {
+    console.log(id, isMyTurn, currentTurnId);
     if (!isMyTurn) {
       Modal({ text: '상대방의 카드 선택을 진행중에 있습니다. 잠시만 기다려주세요.' })
         .then(() => {})
         .catch((err) => {
           console.log(err);
         });
-      return;
-    } else {
-      CardModal({ title: '카드 선택' })
-        .then((data) => {
-          console.log({ data });
-          socket.emit('select-a-card', data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     }
-  }, [isMyTurn]);
+    CardModal({ id, title: `카드 선택${isMyTurn ? '' : '(상대방 카드 선택중)'}`, isMyTurn })
+      .then((data) => {
+        const { number } = data;
+        setPutToNumber(number);
+        setState('PICK_BOARD');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [currentTurnId, id, isMyTurn]);
+
+  const onSelectBoard = () => {
+    // init state
+    setPutToNumber(null);
+  };
 
   useEffect(() => {
-    socket.on('response-write-number-to-sheet', (data) => {
+    socket.on('response-start-turn', (data = {}) => {
+      const { room } = data;
+      const { currentTurn, currentTurnPlayer } = room || {};
+
       console.log(data);
+      setTurn(currentTurn);
+      setCurrentTurnId(currentTurnPlayer?.id);
     });
 
-    socket.on('response-select-a-card', (data) => {
-      const number = data?.selectedCard?.[id];
-      setPutToNumber(number);
-      setState('PICK_BOARD');
+    socket.on('response-end-game', (data) => {
+      console.log('response-end-game', data);
+      onResponseEndGame(data);
     });
 
     return () => {
-      socket.off('response-write-number-to-sheet');
-      socket.off('response-select-a-card');
+      socket.off('response-start-turn');
+      socket.off('response-end-game');
     };
   }, []);
 
-  const onSelectBoard = (boardList) => {
-    console.log(boardList);
-    setBoardList(boardList);
-  };
-
   return (
     <div className={styles['room-gaming']}>
-      {!isMyTurn && <div className={styles['dimd-layer']}></div>}
-      <BoardList
-        isPickingCard={isPickingCard}
-        boardList={boardList}
-        onSelectBoard={onSelectBoard}
-      />
+      <div className={styles['gaming-info']}>
+        <dl className={styles['gaming-info__round']}>
+          <dt>라운드</dt>
+          <dd>{turn}</dd>
+        </dl>
+      </div>
+      <BoardList state={state} putToNumber={putToNumber} onSelectBoard={onSelectBoard} />
     </div>
   );
 };

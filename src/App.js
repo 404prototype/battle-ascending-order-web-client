@@ -8,7 +8,7 @@ import Room from './pages/room/_index';
 const App = () => {
   const layoutInfo = {
     header: {
-      title: '게임'
+      title: '게임 - 배틀 오름차순'
     },
     content: {
       title: '배틀 오름차순'

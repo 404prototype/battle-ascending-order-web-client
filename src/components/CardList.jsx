@@ -5,7 +5,7 @@ import Card from './Card';
 import styles from './CardList.module.scss';
 
 const CardList = (props = {}) => {
-  const { onClickSelectMyCard = () => {} } = props;
+  const { onClickSelectMyCard = () => {}, id, isMyTurn } = props;
   const defaultCardOpt = {
     animation: true,
     isSelected: false
@@ -23,15 +23,19 @@ const CardList = (props = {}) => {
 
   const onClickCard = (info = {}) => {
     const { index, isSelected } = info;
+
+    if (!isMyTurn) {
+      return;
+    }
+
     if (isTwiceSelected) {
       if (isBeforeDestroy) {
         return;
       }
 
       setIsBeforeDestroy(true);
-      setMyCard(info.cardNumber);
 
-      onClickSelectMyCard({
+      socket.emit('select-a-card', {
         number: info.cardNumber
       });
     }
@@ -43,27 +47,24 @@ const CardList = (props = {}) => {
     }
 
     setClickedCards([...clickedCards, index]);
-    console.log(clickedCards, [...clickedCards, index]);
 
     if (clickedCardSize === 0) {
-      socket.emit('pick-first-card');
+      socket.emit('pick-first-card', { cardIndex: index });
     } else {
-      socket.emit('pick-second-card');
+      socket.emit('pick-second-card', { cardIndex: index });
     }
   };
 
   useEffect(() => {
-    const onResponsePickCard = (data, isFirst) => {
-      const index = clickedCards[isFirst ? 0 : 1];
-      const number = data?.pickedCard;
+    const onResponsePickCard = (data = {}, isFirst) => {
+      const { pickedCard, cardIndex } = data;
       const changedCardList = [...cardList];
       const changedInfo = {
-        ...changedCardList[index],
+        ...changedCardList[cardIndex],
         isSelected: true,
-        cardNumber: number
+        cardNumber: pickedCard
       };
-
-      changedCardList[index] = changedInfo;
+      changedCardList[cardIndex] = changedInfo;
       setCardList(changedCardList);
       setSelectedCards([...selectedCards, changedInfo]);
     };
@@ -78,11 +79,19 @@ const CardList = (props = {}) => {
       onResponsePickCard(data, false);
     });
 
+    socket.on('response-select-a-card', (data) => {
+      console.log('response-select-a-card', data);
+      const number = data?.selectedCard?.[id];
+      setMyCard(number);
+      onClickSelectMyCard({ number });
+    });
+
     return () => {
       socket.off('response-pick-first-card');
       socket.off('response-pick-second-card');
+      socket.off('response-select-a-card');
     };
-  }, [cardList, clickedCards, selectedCards]);
+  }, [isMyTurn, cardList, clickedCards, selectedCards, id, onClickSelectMyCard]);
 
   return (
     <ol className={styles['list-card']}>
