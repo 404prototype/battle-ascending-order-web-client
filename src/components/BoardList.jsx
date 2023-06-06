@@ -4,8 +4,9 @@ import { socket } from '../api/socket';
 import styles from './BoardList.module.scss';
 
 const BoardList = (props = {}) => {
-  const { state, putToNumber, onSelectBoard } = props;
-  const [boardList, setBoardList] = useState(Array(8).fill({ number: null }));
+  // PICK_BOARD
+  const { state, putToNumber, onSelectBoard, initalBoardList } = props;
+  const [boardList, setBoardList] = useState(initalBoardList || Array(8).fill({ number: null }));
   const isValidateStep = useMemo(() => state === 'PICK_BOARD', [state]);
 
   const updateBoardList = (data = {}) => {

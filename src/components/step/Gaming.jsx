@@ -11,8 +11,8 @@ const Gaming = (props = {}) => {
   const [currentTurnId, setCurrentTurnId] = useState(initalTurnPlayer?.id);
   const [turn, setTurn] = useState(1);
   const [putToNumber, setPutToNumber] = useState(null);
-  // PICK_CARD, PICK_BOARD
-  const [state, setState] = useState('PICK_CARD');
+  // PENDING, PICK_BOARD
+  const [state, setState] = useState('PENDING');
 
   const isMyTurn = useMemo(() => id === currentTurnId, [id, currentTurnId]);
 

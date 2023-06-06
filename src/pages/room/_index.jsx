@@ -15,6 +15,7 @@ const Room = (props = {}) => {
   const [initalGameInfo, setinitalGameInfo] = useState({});
   const [isInitSocket, setIsInitSocket] = useState(false);
   const [players, setPlayers] = useState([{ name: '제임스' }]);
+  const [resultData, setResultData] = useState([]);
   const ruleInfo = {
     title: '배틀오름차순',
     desc: '랜덤으로 뽑은 숫자를 오름차순으로 최대한 길게 배열해라',
@@ -37,6 +38,21 @@ const Room = (props = {}) => {
   };
 
   useEffect(() => {
+    // setResultData({
+    //   sheets: [
+    //     {
+    //       id: '2',
+    //       sheet: [1, 3, 7, 5, 6, 7, 9, 9]
+    //     },
+    //     {
+    //       id: '3',
+    //       sheet: [2, 2, 3, 4, 1, 9, 10, 4]
+    //     }
+    //   ],
+    //   winner: '2',
+    //   loser: '3'
+    // });
+    // window.setStep = setStep;
     initSocket(id);
     // socket.connect();
 
@@ -46,7 +62,7 @@ const Room = (props = {}) => {
     });
 
     return () => {
-      // socket.disconnect();
+      socket.disconnect();
     };
   }, [id]);
 
@@ -66,7 +82,8 @@ const Room = (props = {}) => {
   };
 
   const onResponseEndGame = (data) => {
-    // setStep('RESULT');
+    setResultData(data);
+    setStep('RESULT');
   };
 
   return (
@@ -92,7 +109,7 @@ const Room = (props = {}) => {
                 />
               );
             case 'RESULT':
-              return <Result />;
+              return <Result id={id} resultData={resultData} />;
             default:
               return;
           }

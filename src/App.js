@@ -4,6 +4,7 @@ import { Container as ModalContainer } from 'react-modal-promise';
 import DefaultLayout from './layout/Default';
 import Home from './pages/Home';
 import Room from './pages/room/_index';
+import RoomList from './pages/room/List';
 
 const App = () => {
   const layoutInfo = {
@@ -24,6 +25,7 @@ const App = () => {
       <Routes>
         <Route index path="/" element={<Home />} />
         <Route path="/room/:id" element={<Room />} />
+        <Route path="/room/list" element={<RoomList />} />
       </Routes>
     </DefaultLayout>
   );
