@@ -4,7 +4,7 @@ import styles from './Result';
 
 const Result = (props = {}) => {
   const { resultData, id } = props;
-  const { sheets, winner } = resultData || {};
+  const { sheets = [], winner } = resultData || {};
   const sortedSheets = sheets.toSorted((a, b) => a.id - b.id);
   const isWinnerMe = useMemo(() => winner === id, [winner, id]);
 
