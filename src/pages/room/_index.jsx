@@ -5,16 +5,18 @@ import Ready from '../../components/step/Ready';
 import Gaming from '../../components/step/Gaming';
 import Result from '../../components/step/Result';
 import Modal from '../../components/Modal';
+import Spinner from '../../components/Spinner';
 import styles from './_index.module.scss';
 
 const Room = (props = {}) => {
   // enum ['READY', 'GAMING', 'RESULT']
   const navigate = useNavigate();
   const { id = '' } = useParams();
+  const [isJoined, setIsJoined] = useState(false);
   const [step, setStep] = useState('READY');
   const [initalGameInfo, setinitalGameInfo] = useState({});
   const [isInitSocket, setIsInitSocket] = useState(false);
-  const [players, setPlayers] = useState([{ name: '제임스' }]);
+  const [players, setPlayers] = useState([{ id: '제임스', ready: false }]);
   const [resultData, setResultData] = useState([]);
   const ruleInfo = {
     title: '배틀오름차순',
@@ -38,21 +40,21 @@ const Room = (props = {}) => {
   };
 
   useEffect(() => {
-    // setResultData({
-    //   sheets: [
-    //     {
-    //       id: '2',
-    //       sheet: [1, 3, 7, 5, 6, 7, 9, 9]
-    //     },
-    //     {
-    //       id: '3',
-    //       sheet: [2, 2, 3, 4, 1, 9, 10, 4]
-    //     }
-    //   ],
-    //   winner: '2',
-    //   loser: '3'
-    // });
-    // window.setStep = setStep;
+    setResultData({
+      sheets: [
+        {
+          id: '2',
+          sheet: [1, 3, 7, 5, 6, 7, 9, 9]
+        },
+        {
+          id: '3',
+          sheet: [2, 2, 3, 4, 1, 9, 10, 4]
+        }
+      ],
+      winner: '2',
+      loser: '3'
+    });
+    window.setStep = setStep;
     initSocket(id);
     // socket.connect();
 
@@ -61,7 +63,25 @@ const Room = (props = {}) => {
       console.log(socket.id);
     });
 
+    socket.emit('join-room');
+    socket.on('response-join-room', (data) => {
+      console.log('response-join-room', data);
+      // if (data?.state === 'playing') {
+      //   onResponseStartGame(data);
+      //   return;
+      // }
+      setPlayers(data?.room?.players);
+      setIsJoined(true);
+    });
+
+    socket.on('response-ready-game', (data) => {
+      console.log('response-ready-game', data);
+      setPlayers(data?.players);
+    });
+
     return () => {
+      socket.off('response-join-room');
+      socket.off('response-ready-game');
       socket.disconnect();
     };
   }, [id]);
@@ -88,6 +108,7 @@ const Room = (props = {}) => {
 
   return (
     <div className={styles.room}>
+      {!isJoined && <Spinner />}
       {isInitSocket &&
         (() => {
           switch (step) {

@@ -1,10 +1,4 @@
 $fontDirectory: '../../assets/fonts';
-@font-face {
-  font-family: 'poke';
-  font-weight: normal;
-  // src: url(#{$fontDirectory}/NotoSansKR-Regular.woff2) format('woff2');
-  src: local("☺"), url(../../assets/fonts/poke.woff) format('woff');
-}
 
 @font-face {
   font-family: 'notosans';
@@ -17,4 +11,17 @@ $fontDirectory: '../../assets/fonts';
   font-weight: 700;
   src: local("☺"), url(#{$fontDirectory}/NotoSansKR-Bold.woff2) format('woff2');
   src: url(#{$fontDirectory}/NotoSansKR-Bold.woff) format('woff');
+}
+
+@font-face{
+  font-family:'Roboto';
+  font-weight:normal;
+  src:local("☺"), url(#{$fontDirectory}/Roboto-Regular.woff2) format('woff2');
+  src: url(#{$fontDirectory}/Roboto-Regular.woff) format('woff');
+}
+@font-face{
+  font-family:'Roboto';
+  font-weight:bold;
+  src:local("☺"), url(#{$fontDirectory}/Roboto-Bold.woff2) format('woff2');
+  src: url(#{$fontDirectory}/Roboto-Bold.woff) format('woff');
 }

@@ -9,7 +9,7 @@ import RoomList from './pages/room/List';
 const App = () => {
   const layoutInfo = {
     header: {
-      title: '게임 - 배틀 오름차순'
+      title: '404toys'
     },
     content: {
       title: '배틀 오름차순'

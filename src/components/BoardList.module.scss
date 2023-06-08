@@ -3,16 +3,16 @@ $cardHeight: $cardWidth * 1.6;
 .list {
   display: flex;
   width: 100%;
-  margin: 16px;
+  margin: 16px 0;
   flex-wrap: nowrap;
   align-self: flex-end;
+  background: var(--bg-point-60);
   &__item {
     flex: 1 1 auto;
+    border: 2px solid #0061a5;
     &__inner {
       position: relative;
       padding-top: 160%;
-      border: 1px solid #888;
-      box-sizing: border-box;
     }
     &__num {
       position: absolute;
@@ -22,9 +22,7 @@ $cardHeight: $cardWidth * 1.6;
       transform: translate(-50%, -50%);
     }
     & + .list__item {
-      .list__item__inner {
-        border-left: 0 none;
-      }
+      border-left: 0 none;
     }
   }
 }

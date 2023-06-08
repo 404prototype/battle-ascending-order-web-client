@@ -1,0 +1,52 @@
+
+.result {
+  text-align: center;
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  @keyframes blink-caret {
+    50% { border-color: transparent; }
+  }
+  &__tit {
+    display: inline-block;
+    font-size: 50px;
+    font-family: 'Roboto';
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 50px;
+    &__inner {
+      display: inline-block;
+      overflow: hidden;
+      height: 50px;
+      border-right: 0.1em solid #000;
+      animation: typing 1.5s steps(7, end), blink-caret 0.75s step-end infinite;
+    }
+  }
+  &__board {
+    margin-top: 20px;
+    &__title {
+      display: block;
+      padding: 8px 16px 7px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #880000;
+      line-height: 21px;
+      border-radius: 8px;
+      background: #000;
+      text-align: center;
+    }
+  }
+  &.win {
+    .result__tit {
+      color: var(--bg-point-100);
+    }
+  }
+  &.lose {
+    .result__tit {
+      color: #990000;
+    }
+  }
+}
